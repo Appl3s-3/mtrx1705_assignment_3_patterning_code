@@ -1,1 +1,0 @@
-/usr/bin/c++ -rdynamic CMakeFiles/patterning_code.dir/src/main.cpp.o -o patterning_code  dependencies/lunaR/libluna.a dependencies/lunaR/dependencies/glfw/src/libglfw3.a /usr/lib/librt.a -lm -ldl /usr/lib/libGL.so dependencies/lunaR/libglad.a 
