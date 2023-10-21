@@ -1,0 +1,12 @@
+2
+000101010101
+1
+
+This file must contain at least 3 lines
+It represents a binary light pattern
+The first line is in Hz
+The second line is the pattern (0 indicates black, 1 indicates white)
+The third line is a boolean value representing the cycle state
+i.e The pattern will cycle if this is 1
+It is recommended to add numerous 0s at the end of the second line if
+cycling is enabled

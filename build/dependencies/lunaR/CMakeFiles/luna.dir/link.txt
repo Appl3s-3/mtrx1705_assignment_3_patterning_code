@@ -1,0 +1,2 @@
+/usr/bin/ar qc libluna.a CMakeFiles/luna.dir/src/Window.cpp.o CMakeFiles/luna.dir/src/Input.cpp.o CMakeFiles/luna.dir/src/Keyboard.cpp.o CMakeFiles/luna.dir/src/Mouse.cpp.o CMakeFiles/luna.dir/src/Error.cpp.o CMakeFiles/luna.dir/src/BufferManager.cpp.o CMakeFiles/luna.dir/src/VertexArray.cpp.o CMakeFiles/luna.dir/src/Shader.cpp.o CMakeFiles/luna.dir/src/Program.cpp.o CMakeFiles/luna.dir/src/Texture.cpp.o CMakeFiles/luna.dir/src/ShaderUniforms.cpp.o
+/usr/bin/ranlib libluna.a

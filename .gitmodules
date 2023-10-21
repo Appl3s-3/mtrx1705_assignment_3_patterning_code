@@ -1,0 +1,3 @@
+[submodule "dependencies/lunaR"]
+	path = dependencies/lunaR
+	url = git@github.com:Appl3s-3/lunaR.git
