@@ -4,11 +4,8 @@
 #include <iostream>
 #include <cstdint>
 
-#define GLFW_INCLUDE_NONE
-#include "glad/gl.h"
-#include "GLFW/glfw3.h"
-
-#include "luna/Mouse.hpp"
+#include "luna/Window.hpp"
+#include "luna/Input.hpp"
 
 struct Pattern {
     std::string pattern = "0";
@@ -20,6 +17,7 @@ struct Pattern {
 Pattern pattern_from_file(std::string file_name);
 
 int main(int argc, char** argv) {
+
     // Check that a pattern file path was given
     if (argc < 2) {
         std::cout << "No pattern file provided." << std::endl;
@@ -36,46 +34,13 @@ int main(int argc, char** argv) {
     pattern = reload_pattern;
 
     // Window Setup
-    glfwInit();
+    luna::Initiate();
 
-    uint32_t window_width = 1000;
-    uint32_t window_height = 700;
-    const char* window_name = "Patterning Code";
+    luna::Window window = luna::Window(1000, 700, "Patterning Code");
 
-    std::cout << "Creating window: " << window_name << ", with dimensions: ("
-              << window_width << ", " << window_height << ")" << std::endl;
-    
-    // Version
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    luna::Input input = luna::Input(window);
 
-    // Remove deprecated functions
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-
-    // Enable debug context
-    glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-
-    // TODO: remove
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-
-    GLFWwindow* window = glfwCreateWindow(window_width, window_height, window_name, NULL, NULL);
-    if (window == NULL) {
-        std::cout << "Failed to instantiate GLFW3 window." << std::endl;
-    }
-    
-    glfwMakeContextCurrent(window);
-
-    // Load GLAD2
-    const int version = gladLoadGL(glfwGetProcAddress);
-    if (version == 0) {
-        std::cout << "Failed to find OpenGL context." << std::endl;
-    }
-
-
-    luna::Mouse mouse = luna::Mouse(window);
-
-    glClearColor(0.0, 0.0, 0.0, 1.0);
+    window.clear_colour(0.0, 0.0, 0.0);
 
     double start_time = glfwGetTime();
     double end_time = glfwGetTime();
@@ -87,13 +52,13 @@ int main(int argc, char** argv) {
     double speed = 1.0;
 
     // Window Loop
-    while (glfwWindowShouldClose(window) == false) {
-        glfwPollEvents();
-        mouse.process();
+    while (window.not_closed() == true) {
+        window.poll();
+        input.process();
         start_time = glfwGetTime();
 
         // Reload pattern
-        if (mouse.button_down[1] == true) {
+        if (input.mouse.button_down[1] == true) {
             reload_pattern = pattern_from_file(argv[1]);
 
             if (reload_pattern.valid == true) {
@@ -110,12 +75,33 @@ int main(int argc, char** argv) {
             }
         }
 
+        // Toggle Cycling
+        // if (input.keyboard.key_down['C'] == true) {
+        //     cycle != cycle;
+        //     std::cout << "Toggled Cycling: " << cycle << std::endl;
+        // }
+
         // Run pattern
-        if (mouse.button_down[0] == true) {
+        if (input.mouse.button_down[0] == true) {
             running = true;
             speed = 1.0;
             std::cout << "Running Pattern at 1x speed." << std::endl;
             pattern_index = 0;
+        }
+
+        // Run pattern at 2x speed
+        // else if (input.keyboard.key_down['2'] == true) {
+        //     running = true;
+        //     speed = 2.0;
+        //     std::cout << "Running Pattern at 2x speed." << std::endl;
+        // }
+
+        // Quit
+        // if ((input.mouse.position_x > -5.0) && input.mouse.position_y < 5.0) {
+        //     break;
+        // }
+        if (input.keyboard.key_down['Q'] == true) {
+            break;
         }
 
         // Colour Select
@@ -124,7 +110,7 @@ int main(int argc, char** argv) {
             if (pattern.cycle == false) {
                 // Stop running if the end of the pattern is reached.
                 if (pattern_index >= pattern_size) {
-                    glClearColor(0.0, 0.0, 0.0, 1.0);
+                    window.clear_colour(0.0, 0.0, 0.0);
                     running = false;
                     pattern_index = 0;
                 }
@@ -137,10 +123,10 @@ int main(int argc, char** argv) {
             // Change the window colour to the one in the pattern
             switch (pattern.pattern[pattern_index]) {
             case '0':
-                glClearColor(0.0, 0.0, 0.0, 1.0);
+                window.clear_colour(0.0, 0.0, 0.0);
                 break;
             case '1':
-                glClearColor(1.0, 1.0, 1.0, 1.0);
+                window.clear_colour(1.0, 1.0, 1.0);
                 break;
             default:
                 break;
@@ -154,11 +140,11 @@ int main(int argc, char** argv) {
             end_time = glfwGetTime();
         }
 
-        glClear(GL_COLOR_BUFFER_BIT);
-        glfwSwapBuffers(window);
+        window.clear();
+        window.swap_buffers();
     }
 
-    glfwTerminate();
+    luna::Terminate();
     return 0;
 }
 
